@@ -164,10 +164,11 @@ class KNearestNeighbor(object):
       # Store this label in y_pred[i]. Break ties by choosing the smaller     #
       # label.                                                                #
       #########################################################################
-      ycount = np.bincount(closest_y)
-      y_pred[i] = np.argmax(ycount)
+      closest_ybin = np.bincount(closest_y)
+      mostys = [label for label,f in enumerate(closest_ybin) if f==np.max(closest_ybin)]
+      mostccoset_y = [y for y in closest_y if y in mostys]
+      y_pred[i] = mostccoset_y[0]
       #########################################################################
       #                           END OF YOUR CODE                            #
       #########################################################################
-    print y_pred
     return y_pred

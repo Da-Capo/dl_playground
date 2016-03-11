@@ -29,7 +29,21 @@ def softmax_loss_naive(W, X, y, reg):
   # here, it is easy to run into numeric instability. Don't forget the        #
   # regularization!                                                           #
   #############################################################################
-  pass
+  num_train = X.shape[0]
+  num_classes = W.shape[1]
+  for i in xrange(num_train):
+    scores = X[i].dot(W)
+    correct_class_score = scores[y[i]]
+    loss += -np.log(np.exp(correct_class_score)/np.sum(np.exp(scores)))
+    for j in xrange(num_classes):
+        if j == y[i]:
+            dW[:,y[i]] += -(1 - np.exp(correct_class_score)/np.sum(np.exp(scores)))*X[i]
+        else:
+            dW[:,j] += -(- np.exp(scores[j])/np.sum(np.exp(scores)))*X[i]
+  loss /= num_train
+  loss += 0.5 * reg * np.sum(W * W)
+  dW /= num_train
+  dW +=  reg * W
   #############################################################################
   #                          END OF YOUR CODE                                 #
   #############################################################################
@@ -53,10 +67,15 @@ def softmax_loss_vectorized(W, X, y, reg):
   # here, it is easy to run into numeric instability. Don't forget the        #
   # regularization!                                                           #
   #############################################################################
-  pass
+  num_train = X.shape[0]
+  num_classes = W.shape[1]
+  scores = X.dot(W)
+  loss = np.sum(-np.log(np.exp(scores[range(scores.shape[0]),y])/np.sum(np.exp(scores),axis=1)))/num_train + 0.5 * reg * np.sum(W * W)
+  yones = np.zeros_like(scores)
+  yones[range(scores.shape[0]),y] = 1
+  dW = - X.T.dot(yones - np.exp(scores)/np.sum(np.exp(scores),axis=1).reshape(scores.shape[0],1))/num_train + reg * W
   #############################################################################
   #                          END OF YOUR CODE                                 #
   #############################################################################
 
   return loss, dW
-
