@@ -84,28 +84,28 @@ def negSamplingCostAndGradient(predicted, target, outputVectors, dataset,
     grad = np.zeros(outputVectors.shape)
     gradPred = np.zeros(predicted.shape)
 
-    indices = [target]
-    for k in xrange(K):
-        newidx = dataset.sampleTokenIdx()
-        while newidx == target:
-            newidx = dataset.sampleTokenIdx()
-        indices += [newidx]
-
-    labels = np.array([1] + [-1 for k in xrange(K)])
-    vecs = outputVectors[indices,:]
-
-    t = sigmoid(vecs.dot(predicted) * labels)
-    cost = -np.sum(np.log(t))
-
-    delta = labels * (t - 1)
-    gradPred = delta.reshape((1,K+1)).dot(vecs).flatten()
-    gradtemp = delta.reshape((K+1,1)).dot(predicted.reshape(
-        (1,predicted.shape[0])))
-    for k in xrange(K+1):
-        grad[indices[k]] += gradtemp[k,:]
+#    indices = [target]
+#    for k in xrange(K):
+#        newidx = dataset.sampleTokenIdx()
+#        while newidx == target:
+#            newidx = dataset.sampleTokenIdx()
+#        indices += [newidx]
+#
+#    labels = np.array([1] + [-1 for k in xrange(K)])
+#    vecs = outputVectors[indices,:]
+#
+#    t = sigmoid(vecs.dot(predicted) * labels)
+#    cost = -np.sum(np.log(t))
+#
+#    delta = labels * (t - 1)
+#    gradPred = delta.reshape((1,K+1)).dot(vecs).flatten()
+#    gradtemp = delta.reshape((K+1,1)).dot(predicted.reshape(
+#        (1,predicted.shape[0])))
+#    for k in xrange(K+1):
+#        grad[indices[k]] += gradtemp[k,:]
 
     t = sigmoid(predicted.dot(outputVectors[target,:]))
-    cost += -np.log(t)
+    cost = -np.log(t)
     delta = t - 1
 
     gradPred += delta * outputVectors[target, :]
